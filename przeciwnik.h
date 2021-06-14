@@ -1,8 +1,10 @@
 #ifndef PRZECIWNIK_H
 #define PRZECIWNIK_H
+
+#include <cmath>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "pocisk.h"
-#include<iostream>
 
 using namespace sf;
 using namespace std;

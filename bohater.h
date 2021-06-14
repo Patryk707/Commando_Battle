@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include<cmath>
 #include <iostream>
+#include <memory>
+#include "platforma.h"
 
 
 using namespace sf;
@@ -18,7 +20,7 @@ public:
     void setSpeed(float x,float y);
     void setFacing(bool f);
     bool getFacing();
-    void animate(const Time &elapsed, const vector<unique_ptr<Sprite>> &walls);
+    void animate(const Time &elapsed, const vector<shared_ptr<Platforma>> &walls, Clock &jump_cooldown);
 
     //granice
     void setBounds(float l,float r, float t, float b);
@@ -50,9 +52,11 @@ public:
     }
     bool is_running=false;
     //kolizje ze scianami
-    bool czy_pozioma_kolizja(float potential_x, const Sprite & obiekt);
-    bool czy_pionowa_kolizja(float potential_y, const Sprite& obiekt);
+    bool czy_pozioma_kolizja(float potential_x, const Platforma & obiekt);
+    bool czy_pionowa_kolizja(float potential_y, const Platforma& obiekt);
     bool check_collision(Sprite &bonus );
+    bool czy_stoi_na(const Platforma& obiekt);
+
 
 private:
     float right_borderline;

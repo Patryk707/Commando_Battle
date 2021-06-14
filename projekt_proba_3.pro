@@ -13,12 +13,14 @@ SOURCES += \
         bohater.cpp \
         bonus.cpp \
         main.cpp \
+        platforma.cpp \
         pocisk.cpp \
         przeciwnik.cpp
 
 HEADERS += \
     bohater.h \
     bonus.h \
+    platforma.h \
     pocisk.h \
     przeciwnik.h \
     wczytywanie.hpp
