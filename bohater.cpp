@@ -134,12 +134,17 @@ void Bohater::animated_hero_texture() {
     setTextureRect({current_texture * texture_size.x, 0, texture_size.x, texture_size.y});
 }
 
-void Bohater::set_lives(int l) {
+void Bohater::add_lives(int l) {
     lives += l;
 }
 
 bool Bohater::is_alive() {
-    return lives > 0;
+    if(lives > 0){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 bool Bohater::czy_pozioma_kolizja(float potential_x, const Platforma& obiekt) {
@@ -164,5 +169,29 @@ bool Bohater::czy_stoi_na(const Platforma& obiekt) {
 }
 
 bool Bohater::check_collision(Sprite& bonus) {
-    return getGlobalBounds().intersects(bonus.getGlobalBounds());
+    if(getGlobalBounds().intersects(bonus.getGlobalBounds())){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+bool Bohater::chec_collision(Bonus &medal){
+    if(getGlobalBounds().intersects(medal.getGlobalBounds())){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+void Bohater::add_points(int p){
+    points+=p;
+}
+bool Bohater::win(Bonus &medal){
+    if(points >= 6 && chec_collision(medal)){
+        return true;
+    }
+    else{
+        return false;
+    }
 }

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <memory>
 #include "platforma.h"
+#include "bonus.h"
 
 
 using namespace sf;
@@ -30,7 +31,7 @@ public:
     void shoot();
     float shot_cooldown=1;
     //zycia
-    void set_lives(int l);
+    void add_lives(int l);
     bool is_alive();
     //tekstura
     void animated_hero_texture();
@@ -53,9 +54,13 @@ public:
     bool is_running=false;
     //kolizje ze scianami
     bool czy_pozioma_kolizja(float potential_x, const Platforma & obiekt);
-    bool czy_pionowa_kolizja(float potential_y, const Platforma& obiekt);
-    bool check_collision(Sprite &bonus );
+    bool czy_pionowa_kolizja(float potential_y, const Platforma& obiekt);   
     bool czy_stoi_na(const Platforma& obiekt);
+    //zwyciestwo
+    bool check_collision(Sprite &bonus );
+    bool chec_collision(Bonus &medal);
+    void add_points(int p);
+    bool win(Bonus &medal);
 
 
 private:
@@ -67,6 +72,7 @@ private:
     float speed_x;
     float speed_y;
     int lives=3;
+    int points=0;
 
 
     bool facing=true;
