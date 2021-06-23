@@ -2,13 +2,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <memory>
+#include <vector>
 #include "bohater.h"
 #include "przeciwnik.h"
 #include "pocisk.h"
 #include "platforma.h"
-#include <vector>
 #include "wczytywanie.hpp"
 #include "bonus.h"
+#include "difficulty_level.hpp"
+#include "dane_platformy.hpp"
 
 using namespace std;
 using namespace sf;
@@ -16,129 +18,124 @@ using namespace sf;
 vector<Pocisk> Pocisk::wystrzelone_pociski;
 vector<Pocisk> Pocisk::wrogie_pociski;
 
-void tworzenie_scian(vector<shared_ptr<Platforma>>& otoczenie, Texture& sciana_tekstura, Texture& blok_tekstura,
-                     RenderWindow& window, Bohater& postac) {
-    auto block0 = make_shared<Platforma>(blok_tekstura);
-    block0->setPosition(0, window.getSize().y - 50);
-    block0->setTextureRect(IntRect(0, 0, window.getSize().x, 50));
-    otoczenie.emplace_back(block0);
+void tworzenie_scian(vector<shared_ptr<Platforma>>& otoczenie, Texture& sciana_tekstura, Texture& blok_tekstura) {
 
-    auto block1 = make_shared<Platforma>(blok_tekstura);
-    block1->setPosition(150, window.getSize().y - 50 - postac.getGlobalBounds().height);
-    block1->setScale(1, 0.43);
-    otoczenie.emplace_back(block1);
+    vector<dane_platformy> platformy = load_map("../start_map.cfg");
 
-    //auto block2=make_shared<Sprite>();
-    // block2->setTexture(blok_tekstura);
-    //block2->setPosition(214,window.getSize().y-50-postac.getGlobalBounds().height);
-    //block2->setScale(0.5,0.86);
-    //otoczenie.emplace_back(block2);
+    for (const dane_platformy& dane_platformy : platformy) {
+        shared_ptr<Platforma> platform;
+        if (dane_platformy.typ_platformy == "blok") {
+            platform = make_shared<Platforma>(blok_tekstura);
+        } else {
+            platform = make_shared<Platforma>(sciana_tekstura);
+        }
+        platform->setPosition(dane_platformy.pozycja);
+        platform->setScale(dane_platformy.skala);
+        if (dane_platformy.typ_platformy == "platforma_ruszajaca") {
+            platform->platforma_ruszajaca = true;
+            platform->speed_y = 100;
+            platform->setBounds(dane_platformy.gorna_granica,dane_platformy.dolna_granica);
+        }
+        otoczenie.emplace_back(platform);
+    }
 
+//    auto block6 = make_shared<Platforma>(blok_tekstura);
+//    block6->setPosition(window.getSize().x / 2 - 210, window.getSize().y - 80 - 3 * postac.getGlobalBounds().height);
+//    block6->setTextureRect(IntRect(0, 0, 128, 64));
+//    block6->setScale(2.8, 0.5);
+//    otoczenie.emplace_back(block6);
 
-    auto wall2 = make_shared<Platforma>(sciana_tekstura);
-    wall2->setPosition(385, window.getSize().y - 152);
-    wall2->setScale(3, 0.2);
-    otoczenie.emplace_back(wall2);
+//    auto block7 = make_shared<Platforma>(blok_tekstura);
+//    block7->setPosition(window.getSize().x / 2 - 594, window.getSize().y - 80 - 4 * postac.getGlobalBounds().height);
+//    //block7->setTextureRect(IntRect(0,0,128,64));
+//    block7->setScale(3, 0.43);
+//    otoczenie.emplace_back(block7);
 
-    auto block3 = make_shared<Platforma>(blok_tekstura);
-    block3->setPosition(window.getSize().x / 2 + 200, window.getSize().y - 50 - 1 * postac.getGlobalBounds().height);
-    block3->setScale(0.5, 0.43);
-    otoczenie.emplace_back(block3);
+//    auto block8 = make_shared<Platforma>(blok_tekstura);
+//    block8->setPosition(window.getSize().x / 2 - 594, 350);
+//    //block7->setTextureRect(IntRect(0,0,128,64));
+//    block8->setScale(3, 0.43);
+//    otoczenie.emplace_back(block8);
 
-    auto block4 = make_shared<Platforma>(blok_tekstura);
-    block4->setPosition(window.getSize().x / 2 + 264, window.getSize().y - 50 - 2 * postac.getGlobalBounds().height);
-    block4->setScale(2.5, 0.86);
-    otoczenie.emplace_back(block4);
+//    auto block9 = make_shared<Platforma>(blok_tekstura);
+//    block9->setPosition(window.getSize().x / 2 - 210, 350 - postac.getGlobalBounds().height);
+//    //block7->setTextureRect(IntRect(0,0,128,64));
+//    block9->setScale(3.5, 0.43);
+//    otoczenie.emplace_back(block9);
 
-    auto block5 = make_shared<Platforma>(blok_tekstura);
-    block5->setPosition(window.getSize().x / 2 + 584, window.getSize().y - 50 - 3 * postac.getGlobalBounds().height);
-    block5->setScale(2, 1.29);
-    otoczenie.emplace_back(block5);
+//    auto wall4 = make_shared<Platforma>(sciana_tekstura);
+//    wall4->setScale(1, 0.2);
+//    wall4->setPosition(window.getSize().x / 2 + 340, 350 - postac.getGlobalBounds().height);
+//    otoczenie.emplace_back(wall4);
 
-    auto wall3 = make_shared<Platforma>(sciana_tekstura);
-    wall3->setScale(1.75, 0.2);
-    wall3->setPosition(window.getSize().x / 2 + 264, window.getSize().y - 60 - 3 * postac.getGlobalBounds().height - 30);
-    otoczenie.emplace_back(wall3);
+//    auto block10 = make_shared<Platforma>(blok_tekstura);
+//    block10->setPosition(window.getSize().x / 2 + 506, 150);
+//    //block7->setTextureRect(IntRect(0,0,128,64));
+//    block10->setScale(0.5, 0.2);
+//    otoczenie.emplace_back(block10);
 
-    auto block6 = make_shared<Platforma>(blok_tekstura);
-    block6->setPosition(window.getSize().x / 2 - 210, window.getSize().y - 80 - 3 * postac.getGlobalBounds().height);
-    block6->setTextureRect(IntRect(0, 0, 128, 64));
-    block6->setScale(2.8, 0.5);
-    otoczenie.emplace_back(block6);
+//    auto wall5 = make_shared<Platforma>(sciana_tekstura);
+//    wall5->setScale(1, 0.2);
+//    wall5->setPosition(window.getSize().x / 2 + 280, 150);
+//    otoczenie.emplace_back(wall5);
 
-    auto block7 = make_shared<Platforma>(blok_tekstura);
-    block7->setPosition(window.getSize().x / 2 - 594, window.getSize().y - 80 - 4 * postac.getGlobalBounds().height);
-    //block7->setTextureRect(IntRect(0,0,128,64));
-    block7->setScale(3, 0.43);
-    otoczenie.emplace_back(block7);
+//    auto wall6 = make_shared<Platforma>(sciana_tekstura);
+//    wall6->setScale(1, 0.2);
+//    wall6->setPosition(window.getSize().x / 2 + 50, 150);
+//    otoczenie.emplace_back(wall6);
 
-    auto block8 = make_shared<Platforma>(blok_tekstura);
-    block8->setPosition(window.getSize().x / 2 - 594,350);
-    //block7->setTextureRect(IntRect(0,0,128,64));
-    block8->setScale(3, 0.43);
-    otoczenie.emplace_back(block8);
+//    auto block11 = make_shared<Platforma>(blok_tekstura);
+//    block11->setPosition(window.getSize().x / 2 - 434, 150);
+//    //block7->setTextureRect(IntRect(0,0,128,64));
+//    block11->setScale(3, 0.43);
+//    otoczenie.emplace_back(block11);
 
-    auto block9 = make_shared<Platforma>(blok_tekstura);
-    block9->setPosition(window.getSize().x / 2 - 210,350-postac.getGlobalBounds().height);
-    //block7->setTextureRect(IntRect(0,0,128,64));
-    block9->setScale(3.5, 0.43);
-    otoczenie.emplace_back(block9);
+//    auto block12 = make_shared<Platforma>(blok_tekstura);
+//    block12->setPosition(0, 150 - postac.getGlobalBounds().height);
+//    //block7->setTextureRect(IntRect(0,0,128,64));
+//    block12->setScale(2.86, 0.43);
+//    otoczenie.emplace_back(block12);
 
-    auto wall4 = make_shared<Platforma>(sciana_tekstura);
-    wall4->setScale(1, 0.2);
-    wall4->setPosition(window.getSize().x / 2+340, 350-postac.getGlobalBounds().height);
-    otoczenie.emplace_back(wall4);
+//    auto platforma1 = make_shared<Platforma>(sciana_tekstura);
+//    platforma1->setPosition(0, window.getSize().y - 80 - 4 * postac.getGlobalBounds().height + 30);
+//    platforma1->platforma_ruszajaca = true;
+//    platforma1->speed_y = 100;
+//    platforma1->setScale(1.6, 0.2);
+//    platforma1->setBounds(350, 660);
+//    otoczenie.emplace_back(platforma1);
 
-    auto block10 = make_shared<Platforma>(blok_tekstura);
-    block10->setPosition(window.getSize().x / 2 +506,150);
-    //block7->setTextureRect(IntRect(0,0,128,64));
-    block10->setScale(0.5, 0.2);
-    otoczenie.emplace_back(block10);
-
-    auto wall5 = make_shared<Platforma>(sciana_tekstura);
-    wall5->setScale(1, 0.2);
-    wall5->setPosition(window.getSize().x / 2+280, 150);
-    otoczenie.emplace_back(wall5);
-
-    auto wall6 = make_shared<Platforma>(sciana_tekstura);
-    wall6->setScale(1, 0.2);
-    wall6->setPosition(window.getSize().x / 2+50, 150);
-    otoczenie.emplace_back(wall6);
-
-    auto block11 = make_shared<Platforma>(blok_tekstura);
-    block11->setPosition(window.getSize().x / 2 -434,150);
-    //block7->setTextureRect(IntRect(0,0,128,64));
-    block11->setScale(3, 0.43);
-    otoczenie.emplace_back(block11);
-
-    auto block12 = make_shared<Platforma>(blok_tekstura);
-    block12->setPosition(0,150-postac.getGlobalBounds().height);
-    //block7->setTextureRect(IntRect(0,0,128,64));
-    block12->setScale(2.86, 0.43);
-    otoczenie.emplace_back(block12);
-
-
-
-
+//    auto platforma2 = make_shared<Platforma>(sciana_tekstura);
+//    platforma2->setPosition(window.getSize().x / 2 + 570, 315);
+//    platforma2->platforma_ruszajaca = true;
+//    platforma2->speed_y = 100;
+//    platforma2->setScale(1.6, 0.2);
+//    platforma2->setBounds(150, 350);
+//    otoczenie.emplace_back(platforma2);
 }
 
 
 int main() {
     RenderWindow window(VideoMode(1600, 900), "Projekt");
     window.setFramerateLimit(60);
-    Event event;
+    Event event{};
+
+    difficulty_level::load_diff_level("../difficulty_levels.cfg");
+
+    Font font;
+    font.loadFromFile("../slkscr.ttf");
+    Text poziom(difficulty_level::level_name, font);
+    poziom.setCharacterSize(30);
+    poziom.setStyle(Text::Bold);
+    poziom.setFillColor(Color::Red);
+    poziom.setPosition(window.getSize().x -20 - poziom.getGlobalBounds().width, 20);
 
 
-
-    //Texture platformy_tekstura=loadtexture("./../Projekt_proba1/Environment/ground_grass_small.png");
-    //platformy_tekstura.setRepeated(true);
-    //Texture bohater_tekstura=loadtexture("./../Projekt_proba2/john_run.png");
     Texture sciana_tekstura = load_texture("../grass.png");
     Texture blok_tekstura = load_texture("../grassMid.png");
     //Texture przeciwnik_tekstura=load_texture("./../Projekt_proba_3/grunt.png");
     Texture bonus_tekstura = load_texture("../star.png");
     Texture tlo_tekstura = load_texture("../bg_bluecolor.png");
-    Texture medaaal_tekstura = load_texture("../shaded_medal4.png");
+    Texture medaaal_tekstura = load_texture("../shaded_medal4.png");    
     sciana_tekstura.setRepeated(true);
     blok_tekstura.setRepeated(true);
 
@@ -159,24 +156,9 @@ int main() {
     postac.setBounds(0, window.getSize().x, 0, window.getSize().y);
     postac.setSpeed(200, 200);
     //walls
-    tworzenie_scian(otoczenie, sciana_tekstura, blok_tekstura, window, postac);
+    tworzenie_scian(otoczenie, sciana_tekstura, blok_tekstura);
 
 //platforma
-    shared_ptr<Platforma> platforma1 = make_shared<Platforma>(sciana_tekstura);
-    platforma1->setPosition(0,window.getSize().y - 80 - 4 * postac.getGlobalBounds().height+30);
-    platforma1->platforma_ruszajaca=true;
-    platforma1->speed_y=100;
-    platforma1->setScale(1.6, 0.2);
-    platforma1->setBounds(350, 660);
-    otoczenie.emplace_back(platforma1);
-
-    shared_ptr<Platforma> platforma2 = make_shared<Platforma>(sciana_tekstura);
-    platforma2->setPosition(window.getSize().x / 2+570, 315);
-    platforma2->platforma_ruszajaca=true;
-    platforma2->speed_y=100;
-    platforma2->setScale(1.6, 0.2);
-    platforma2->setBounds(150, 350);
-    otoczenie.emplace_back(platforma2);
 
 
 
@@ -224,7 +206,8 @@ int main() {
     enemies.emplace_back(enemy2);
 
     Przeciwnik enemy3(Vector2f(-2.5, 2.5));
-    enemy3.set_position(Vector2f(window.getSize().x / 2 + 300, window.getSize().y - 76 - 2 * postac.getGlobalBounds().height));
+    enemy3.set_position(
+            Vector2f(window.getSize().x / 2 + 300, window.getSize().y - 76 - 2 * postac.getGlobalBounds().height));
     enemy3.shot_cooldown.restart();
     enemy3.setBounds(window.getSize().x / 2 + 250, window.getSize().x / 2 + 584);
     enemies.emplace_back(enemy3);
@@ -242,7 +225,7 @@ int main() {
     enemies.emplace_back(enemy5);
 
     Przeciwnik enemy6(Vector2f(-2.5, 2.5));
-    enemy6.set_position(Vector2f(window.getSize().x / 2, 350-postac.getGlobalBounds().height-27));
+    enemy6.set_position(Vector2f(window.getSize().x / 2, 350 - postac.getGlobalBounds().height - 27));
     enemy6.shot_cooldown.restart();
     enemy6.setBounds(window.getSize().x / 2 - 210, window.getSize().x / 2 + 238);
     enemies.emplace_back(enemy6);
@@ -279,7 +262,7 @@ int main() {
 
     auto bonus5 = make_shared<Sprite>();
     bonus5->setTexture(bonus_tekstura);
-    bonus5->setPosition(window.getSize().x / 2+300, 85);
+    bonus5->setPosition(window.getSize().x / 2 + 300, 85);
     bonus5->setScale(0.5, 0.5);
     bonusy.emplace_back(bonus5);
 
@@ -293,13 +276,11 @@ int main() {
     //bonusy_klasa.emplace_back(bonus4);
 
     //warunek zwyciestwa
-    Bonus medal(Vector2f(0.8,0.8),medaaal_tekstura,Vector2f(25,25));
+    Bonus medal(Vector2f(0.8, 0.8), medaaal_tekstura, Vector2f(25, 25));
 
 
     //pocisk
     bool wystrzelony = false;
-
-
 
 
     Clock clock;
@@ -311,10 +292,11 @@ int main() {
     while (window.isOpen()) {
         Time elapsed = clock.restart();
         window.clear(Color::Black);
-        window.pollEvent(event);
-        if (event.type == Event::Closed) {
-            window.close();
-            break;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                window.close();
+                break;
+            }
         }
         window.draw(tlo);
 
@@ -331,11 +313,13 @@ int main() {
         //wystrzeliwanie pociskow
         for (auto& wystrzelony_pocisk : Pocisk::wystrzelone_pociski) {
             window.draw(wystrzelony_pocisk);
-            wystrzelony_pocisk.set_speed(wystrzelony_pocisk.getFacing() ? 3 : -3);
+            wystrzelony_pocisk.set_speed(wystrzelony_pocisk.getFacing() ? difficulty_level::bohater_bullet_speed
+                                                                        : -difficulty_level::bohater_bullet_speed);
         }
         for (auto& wrogi_pocisk : Pocisk::wrogie_pociski) {
             window.draw(wrogi_pocisk);
-            wrogi_pocisk.set_speed(wrogi_pocisk.getFacing() ? 3 : -3);
+            wrogi_pocisk.set_speed(wrogi_pocisk.getFacing() ? difficulty_level::przeciwnik_bullet_speed
+                                                            : -difficulty_level::przeciwnik_bullet_speed);
         }
 
         //otoczenie a pociski
@@ -402,12 +386,12 @@ int main() {
                         cout << "Brawo, dzieki bonusowi zyskales szybsze wystrzeliwanie pociskow" << endl;
                         break;
                     }
-                }                
+                }
                 bonusy.erase(bonus);
             }
         }
-        if(postac.win(medal)){
-            cout<<"Wygrales";
+        if (postac.win(medal)) {
+            cout << "Wygrales";
             break;
         }
 
@@ -449,8 +433,12 @@ int main() {
 
         //collision postac
         postac.animate(elapsed, otoczenie, jump_cooldown);
-        platforma1->animate(elapsed);
-        platforma2->animate(elapsed);
+        for(const auto& ksztalty:otoczenie){
+            if(ksztalty->platforma_ruszajaca){
+                ksztalty->animate(elapsed);
+            }
+        }
+
 
 
 
@@ -471,7 +459,7 @@ int main() {
         //}
         window.draw(postac);
         window.draw(medal);
-
+        window.draw(poziom);
 
 
         window.display();

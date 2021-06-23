@@ -68,7 +68,11 @@ DIST          =  bohater.h \
 		platforma.h \
 		pocisk.h \
 		przeciwnik.h \
-		wczytywanie.hpp ..\bohater.cpp \
+		wczytywanie.hpp \
+		dane_platformy.hpp \
+		difficulty_level.hpp \
+		difficulty_levels.cfg \
+		start_map.cfg ..\bohater.cpp \
 		..\bonus.cpp \
 		..\main.cpp \
 		..\platforma.cpp \
@@ -196,6 +200,9 @@ release/bohater.o: ../bohater.cpp ../bohater.h \
 		C:/SFML-2.5.1/include/SFML/Graphics/Sprite.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/Text.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/VertexBuffer.hpp \
+		../difficulty_level.hpp \
+		../platforma.h \
+		../bonus.h \
 		../pocisk.h \
 		../przeciwnik.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\bohater.o ..\bohater.cpp
@@ -352,11 +359,13 @@ release/main.o: ../main.cpp C:/SFML-2.5.1/include/SFML/Window.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/Text.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/VertexBuffer.hpp \
 		../bohater.h \
+		../difficulty_level.hpp \
+		../platforma.h \
+		../bonus.h \
 		../przeciwnik.h \
 		../pocisk.h \
-		../platforma.h \
 		../wczytywanie.hpp \
-		../bonus.h
+		../dane_platformy.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\main.o ..\main.cpp
 
 release/platforma.o: ../platforma.cpp ../platforma.h \
@@ -511,7 +520,8 @@ release/pocisk.o: ../pocisk.cpp ../pocisk.h \
 		C:/SFML-2.5.1/include/SFML/Graphics/Sprite.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/Text.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/VertexBuffer.hpp \
-		../przeciwnik.h
+		../przeciwnik.h \
+		../difficulty_level.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\pocisk.o ..\pocisk.cpp
 
 release/przeciwnik.o: ../przeciwnik.cpp ../przeciwnik.h \
@@ -589,6 +599,7 @@ release/przeciwnik.o: ../przeciwnik.cpp ../przeciwnik.h \
 		C:/SFML-2.5.1/include/SFML/Graphics/Sprite.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/Text.hpp \
 		C:/SFML-2.5.1/include/SFML/Graphics/VertexBuffer.hpp \
+		../difficulty_level.hpp \
 		../pocisk.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\przeciwnik.o ..\przeciwnik.cpp
 

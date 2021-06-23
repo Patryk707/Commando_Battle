@@ -1,32 +1,32 @@
 #include "przeciwnik.h"
 
 Przeciwnik::Przeciwnik(Vector2f size) {
-    this->setScale(size);
+    setScale(size);
     setOrigin(float(texture_size.x) / 2, float(texture_size.y) / 2);
 
 }
 
 void Przeciwnik::set_position(Vector2f new_position) {
-    this->setPosition(new_position);
+    setPosition(new_position);
 }
 
 
 void Przeciwnik::set_speed(float speed) {
-    this->speed_x = speed;
+    speed_x = speed;
 }
 
 void Przeciwnik::animate(const Time& elapsed) {
     float sec = elapsed.asSeconds();
-    set_speed(100);
+    set_speed(difficulty_level::przeciwnik_speed);
     set_kierunek_ruchu();
     float droga = speed_x * sec;
     if (!kierunek_ruchu) {
         setScale(-2.5, 2.5);
-        move(-std::abs(droga), 0);
+        move(-abs(droga), 0);
         setFacing(false);
     } else {
         setScale(2.5, 2.5);
-        move(std::abs(droga), 0);
+        move(abs(droga), 0);
         setFacing(true);
     }
 

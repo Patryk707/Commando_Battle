@@ -23,4 +23,8 @@ HEADERS += \
     platforma.h \
     pocisk.h \
     przeciwnik.h \
-    wczytywanie.hpp
+    wczytywanie.hpp \
+    dane_platformy.hpp \
+    difficulty_level.hpp \
+    difficulty_levels.cfg \
+    start_map.cfg

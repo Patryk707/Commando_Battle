@@ -2,7 +2,7 @@
 #include "pocisk.h"
 
 Bohater::Bohater(Vector2f& position) {
-    this->setPosition(position);
+    setPosition(position);
 
     setTextureRect({0, 0, texture_size.x, texture_size.y});
     setOrigin(float(texture_size.x) / 2, float(texture_size.y) / 2);
@@ -37,7 +37,7 @@ void Bohater::bounce() {
         speed_y = -abs(speed_y);
     } else if (getGlobalBounds().left <= left_borderline) {
         speed_x = abs(speed_x);
-    } else if (this->getGlobalBounds().left + getGlobalBounds().width >= right_borderline) {
+    } else if (getGlobalBounds().left + getGlobalBounds().width >= right_borderline) {
         speed_x = -abs(speed_x);
     }
 }
@@ -51,14 +51,14 @@ void Bohater::shoot() {
 void Bohater::animate(const Time& elapsed, const vector<shared_ptr<Platforma>>& platforms, Clock& jump_cooldown) {
     float sec = elapsed.asSeconds();
 
-    if (Keyboard::isKeyPressed(Keyboard::Key::A) && this->getGlobalBounds().left > left_borderline) {
-        speed_x = -200;
+    if (Keyboard::isKeyPressed(Keyboard::Key::A) && getGlobalBounds().left > left_borderline) {
+        speed_x = -difficulty_level::bohater_speed;
         setScale(-2.5, 2.5);
         setFacing(false);
         is_running = true;
     } else if (Keyboard::isKeyPressed(Keyboard::Key::D) &&
-               this->getGlobalBounds().left + this->getGlobalBounds().width < right_borderline) {
-        speed_x = 200;
+               getGlobalBounds().left + getGlobalBounds().width < right_borderline) {
+        speed_x = difficulty_level::bohater_speed;
         setScale(2.5, 2.5);
         setFacing(true);
         is_running = true;
@@ -68,7 +68,8 @@ void Bohater::animate(const Time& elapsed, const vector<shared_ptr<Platforma>>& 
         is_running = false;
 
     }
-    if (Keyboard::isKeyPressed(Keyboard::Key::W) && this->getGlobalBounds().top > top_borderline && jump_cooldown.getElapsedTime().asSeconds()>=1) {
+    if (Keyboard::isKeyPressed(Keyboard::Key::W) && getGlobalBounds().top > top_borderline &&
+        jump_cooldown.getElapsedTime().asSeconds() >= 1) {
         //setSpeed(0, -400);
         speed_y = -700;
         jump_cooldown.restart();
@@ -99,15 +100,15 @@ void Bohater::animate(const Time& elapsed, const vector<shared_ptr<Platforma>>& 
         if (czy_pionowa_kolizja(potential_y, *platform)) {
             kolizja_pionowa = true;
         }
-        bool stoi_na_innej=false;
-        for(const shared_ptr<Platforma>& platform2 : platforms){
-            if(platform.get()!=platform2.get() && czy_stoi_na(*platform2) ){
-                stoi_na_innej=true;
+        bool stoi_na_innej = false;
+        for (const shared_ptr<Platforma>& platform2 : platforms) {
+            if (platform.get() != platform2.get() && czy_stoi_na(*platform2)) {
+                stoi_na_innej = true;
             }
 
         }
-        if (czy_stoi_na(*platform)&&platform->platforma_ruszajaca&& !stoi_na_innej) {
-                 move({0, platform->speed_y*sec});
+        if (czy_stoi_na(*platform) && platform->platforma_ruszajaca && !stoi_na_innej) {
+            move({0, platform->speed_y * sec});
 
 
         }
@@ -139,10 +140,9 @@ void Bohater::add_lives(int l) {
 }
 
 bool Bohater::is_alive() {
-    if(lives > 0){
+    if (lives > 0) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
@@ -162,36 +162,36 @@ bool Bohater::czy_pionowa_kolizja(float potential_y, const Platforma& obiekt) {
 }
 
 bool Bohater::czy_stoi_na(const Platforma& obiekt) {
-    return getGlobalBounds().top - 0.1<= obiekt.getGlobalBounds().top + obiekt.getGlobalBounds().height &&
-            getGlobalBounds().top + getGlobalBounds().height + 0.1 >= obiekt.getGlobalBounds().top &&
-            !(getGlobalBounds().left >= obiekt.getGlobalBounds().left + obiekt.getGlobalBounds().width ||
-              getGlobalBounds().left + getGlobalBounds().width <= obiekt.getGlobalBounds().left);
+    return getGlobalBounds().top - 0.1 <= obiekt.getGlobalBounds().top + obiekt.getGlobalBounds().height &&
+           getGlobalBounds().top + getGlobalBounds().height + 0.1 >= obiekt.getGlobalBounds().top &&
+           !(getGlobalBounds().left >= obiekt.getGlobalBounds().left + obiekt.getGlobalBounds().width ||
+             getGlobalBounds().left + getGlobalBounds().width <= obiekt.getGlobalBounds().left);
 }
 
 bool Bohater::check_collision(Sprite& bonus) {
-    if(getGlobalBounds().intersects(bonus.getGlobalBounds())){
+    if (getGlobalBounds().intersects(bonus.getGlobalBounds())) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
-bool Bohater::chec_collision(Bonus &medal){
-    if(getGlobalBounds().intersects(medal.getGlobalBounds())){
+
+bool Bohater::chec_collision(Bonus& medal) {
+    if (getGlobalBounds().intersects(medal.getGlobalBounds())) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
-void Bohater::add_points(int p){
-    points+=p;
+
+void Bohater::add_points(int p) {
+    points += p;
 }
-bool Bohater::win(Bonus &medal){
-    if(points >= 6 && chec_collision(medal)){
+
+bool Bohater::win(Bonus& medal) {
+    if (points >= 6 && chec_collision(medal)) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
