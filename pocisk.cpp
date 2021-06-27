@@ -5,18 +5,20 @@
 using namespace sf;
 using namespace std;
 
-Pocisk::Pocisk(Vector2f position,bool face)
-{   setTexture(pocisk_texture());
+Pocisk::Pocisk(Vector2f position,bool face,bool enemy_bullet)
+{   if(enemy_bullet){
+        setTexture(pocisk_wroga_texture());
+    }
+    else{
+        setTexture(pocisk_gracza_texture());
+    }
     if(face){
         setScale(0.5,0.5);
     }
     else{
         setScale(-0.5,0.5);
     }
-    setPosition(position);
-    //setRadius(promien_pocisku);
-    //setFillColor(Color::Magenta);
-    //setOrigin(promien_pocisku,promien_pocisku);
+    setPosition(position);    
     facing=face;
 }
 

@@ -52,12 +52,12 @@ public:
     }
 
     static Texture& static_john_texture() {
-        const static Texture texture = load_textura("../john_static.png");
+        const static Texture texture = load_textura("../textures/john_static.png");
         return const_cast<Texture&>(texture);
     }
 
     static Texture& running_john_texture() {
-        const static Texture texture = load_textura("../john_run.png");
+        const static Texture texture = load_textura("../textures/john_run.png");
         return const_cast<Texture&>(texture);
     }
 

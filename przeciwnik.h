@@ -53,12 +53,12 @@ public:
     }
 
     static Texture& static_enemy_texture() {
-        const static Texture texture = load_textura("../grunt.png");
+        const static Texture texture = load_textura("../textures/grunt.png");
         return const_cast<Texture&>(texture);
     }
 
     static Texture& running_enemy_texture() {
-        const static Texture texture = load_textura("../grunt_run.png");
+        const static Texture texture = load_textura("../textures/grunt_run.png");
         return const_cast<Texture&>(texture);
     }
 

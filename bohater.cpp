@@ -43,7 +43,7 @@ void Bohater::bounce() {
 }
 
 void Bohater::shoot() {
-    Pocisk nowy_pocisk(Vector2f(20, 20), getFacing());
+    Pocisk nowy_pocisk(Vector2f(20, 20), getFacing(),false);
     nowy_pocisk.set_position(Vector2f(getPosition().x, getPosition().y));
     Pocisk::wystrzelone_pociski.emplace_back(nowy_pocisk);
 }

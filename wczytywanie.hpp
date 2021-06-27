@@ -2,6 +2,8 @@
 #define WCZYTYWANIE_HPP
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <SFML/Graphics.hpp>
 #include "dane_platformy.hpp"
 

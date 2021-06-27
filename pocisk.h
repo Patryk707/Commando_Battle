@@ -13,7 +13,7 @@ class Pocisk:public::Sprite
     //float promien_pocisku=4.0f;
     bool facing;
 public:
-    Pocisk(Vector2f size, bool face);
+    Pocisk(Vector2f size, bool face,bool enemy_bullet);
     static Texture load_textura(const string& filename_with_path) {
         Texture texture;
         if (!texture.loadFromFile(filename_with_path)) {
@@ -22,11 +22,16 @@ public:
         return texture;
     }
 
-    static Texture& pocisk_texture() {
-        const static Texture pocisk_tekstura = load_textura("../bulletYellowSilver_outline.png");
+    static Texture& pocisk_gracza_texture() {
+        const static Texture pocisk_tekstura = load_textura("../textures/bulletYellowSilver_outline.png");
         return const_cast<Texture&>(pocisk_tekstura);
     }
-    //pocisk_tekstura = load_textura("../bulletYellowSilver_outline.png");
+    static Texture& pocisk_wroga_texture() {
+        const static Texture pocisk_tekstura = load_textura("../textures/bulletRedSilver_outline.png");
+        return const_cast<Texture&>(pocisk_tekstura);
+    }
+    //bool enemy_bullet=false;
+
 
     void set_speed(float speed);
     void set_position(sf::Vector2f new_position);
