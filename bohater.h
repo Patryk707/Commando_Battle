@@ -15,7 +15,7 @@ using namespace std;
 class Bohater : public ::Sprite {
 public:
     //poruszanie sie
-    Bohater(Vector2f& position);
+    Bohater(Vector2f& position, Vector2f &scale,float left, float right, float top, float bottom);
 
     void setSpeed(float x, float y);
 
@@ -39,6 +39,10 @@ public:
     void add_lives(int l);
 
     bool is_alive();
+
+    void set_lives(int l);
+
+    int get_lives();
 
     //tekstura
     void animated_hero_texture();
@@ -76,6 +80,8 @@ public:
     bool chec_collision(Bonus& medal);
 
     void add_points(int p);
+
+    void set_points(int p);
 
     bool win(Bonus& medal);
 

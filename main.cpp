@@ -78,7 +78,7 @@ int main() {
     Event event{};
 
     difficulty_level::load_diff_level("../config/difficulty_levels.cfg");
-
+//poziom
     Font font;
     font.loadFromFile("../font/slkscr.ttf");
     Text poziom(difficulty_level::level_name, font);
@@ -87,18 +87,23 @@ int main() {
     poziom.setFillColor(Color::Red);
     poziom.setPosition(window.getSize().x -20 - poziom.getGlobalBounds().width, 20);
 
-
+//tekstury
     Texture sciana_tekstura = load_texture("../textures/grass.png");
     Texture blok_tekstura = load_texture("../textures/grassMid.png");
     Texture bonus_tekstura = load_texture("../textures/star.png");
     Texture tlo_tekstura = load_texture("../textures/bg_bluecolor.png");
     Texture medal_tekstura = load_texture("../textures/shaded_medal4.png");
+    Texture przegrana_tekstura=load_texture("../textures/sGameover_1.png");
+    Texture wygrana_testura=load_texture("../textures/WYGRANA.png");
+    Texture zycia_tekstura=load_texture("../textures/heart pixel art 32x32.png");
     sciana_tekstura.setRepeated(true);
     blok_tekstura.setRepeated(true);
 
+//wektory obiektow
     vector<shared_ptr<Platforma>> otoczenie;
     vector<shared_ptr<Sprite>> bonusy;
     vector<shared_ptr<Przeciwnik>> enemies;
+     vector<shared_ptr<Sprite>> zycia;
 //tlo
     Sprite tlo;
     tlo.setPosition(0, 0);
@@ -106,16 +111,25 @@ int main() {
     tlo.setScale(10, 10);
 
 
-    //postac
+
+
+
+//postac
     Vector2f position(50, window.getSize().y - 100);
-    Bohater postac(position);
-    postac.setScale(2.5, 2.5);
-    postac.setBounds(0, window.getSize().x, 0, window.getSize().y);
-    postac.setSpeed(200, 200);
-    //walls
+    Vector2f scale(2.5, 2.5);
+    Bohater postac(position,scale,0, window.getSize().x, 0, window.getSize().y);
+
+
+//mapa
     tworzenie_scian(otoczenie,bonusy, enemies, sciana_tekstura, blok_tekstura,bonus_tekstura);
 
-
+//serduszka
+               for(int i=0; i<postac.get_lives(); i++){
+                   shared_ptr<Sprite> serduszko;
+                   serduszko = make_shared<Sprite>(zycia_tekstura);
+                   serduszko->setPosition(window.getSize().x-30-((i+1)*serduszko->getGlobalBounds().width),window.getSize().y-30-serduszko->getGlobalBounds().height);
+                   zycia.emplace_back(serduszko);
+               }
 
 
 
@@ -138,7 +152,10 @@ int main() {
     shot_cooldown.restart();
     jump_cooldown.restart();
     srand(time(NULL));
+    bool defeat=false;
+    bool victory=false;
     while (window.isOpen()) {
+
         Time elapsed = clock.restart();
         window.clear(Color::Black);
         while (window.pollEvent(event)) {
@@ -147,9 +164,12 @@ int main() {
                 break;
             }
         }
+        if(!defeat && !victory){
         window.draw(tlo);
 
-        //wystrzeliwanie pociskow
+
+
+//wystrzeliwanie pociskow
         if (!wystrzelony and Keyboard::isKeyPressed(Keyboard::Space)
             and shot_cooldown.getElapsedTime().asSeconds() >= postac.shot_cooldown) {
             postac.shoot();
@@ -158,8 +178,7 @@ int main() {
         } else if (wystrzelony and !Keyboard::isKeyPressed(Keyboard::Space)) {
             wystrzelony = false;
         }
-
-        //wystrzeliwanie pociskow
+ //wystrzeliwanie pociskow
         for (auto& wystrzelony_pocisk : Pocisk::wystrzelone_pociski) {
             window.draw(wystrzelony_pocisk);
             wystrzelony_pocisk.set_speed(wystrzelony_pocisk.getFacing() ? difficulty_level::bohater_bullet_speed
@@ -170,8 +189,7 @@ int main() {
             wrogi_pocisk.set_speed(wrogi_pocisk.getFacing() ? difficulty_level::przeciwnik_bullet_speed
                                                             : -difficulty_level::przeciwnik_bullet_speed);
         }
-
-        //otoczenie a pociski
+//otoczenie a pociski
         for (auto wystrzelony_pocisk = Pocisk::wystrzelone_pociski.begin();
              wystrzelony_pocisk < Pocisk::wystrzelone_pociski.end(); ++wystrzelony_pocisk) {
             for (auto& sciana : otoczenie) {
@@ -191,7 +209,7 @@ int main() {
         }
 
 
-        //przeciwnik a pocisk
+//przeciwnik a pocisk
         for (auto wystrzelony_pocisk = Pocisk::wystrzelone_pociski.begin();
              wystrzelony_pocisk < Pocisk::wystrzelone_pociski.end(); ++wystrzelony_pocisk) {
             for (auto enemy = enemies.begin();
@@ -206,15 +224,16 @@ int main() {
             }
         }
 //bohater a pocisk
+
         for (auto wystrzelony_pocisk = Pocisk::wrogie_pociski.begin();
              wystrzelony_pocisk < Pocisk::wrogie_pociski.end(); ++wystrzelony_pocisk) {
             if (wystrzelony_pocisk->check_collision(postac)) {
                 Pocisk::wrogie_pociski.erase(wystrzelony_pocisk);
                 postac.add_lives(-1);
+                zycia.erase(zycia.end()-1);
                 if (!postac.is_alive()) {
-                    cout << "Przegrana";
-                    window.close();
-                    break;
+                   defeat=true;
+                   break;
                 }
             }
         }
@@ -228,6 +247,10 @@ int main() {
                     case 0: {
                         postac.add_lives(1);
                         cout << "Brawo, dzieki bonusowi zyskales dodatkowe zycie" << endl;
+                        shared_ptr<Sprite> serduszko;
+                        serduszko = make_shared<Sprite>(zycia_tekstura);
+                        serduszko->setPosition(window.getSize().x-30-((zycia.size()+1)*serduszko->getGlobalBounds().width),window.getSize().y-30-serduszko->getGlobalBounds().height);
+                        zycia.emplace_back(serduszko);
                         break;
                     }
                     case 1: {
@@ -240,8 +263,7 @@ int main() {
             }
         }
         if (postac.win(medal)) {
-            cout << "Wygrales";
-            break;
+            victory=true;
         }
 
 
@@ -252,8 +274,8 @@ int main() {
 //enemy animation
 
         for (auto& enemy : enemies) {
-            if (postac.getGlobalBounds().left > enemy->left_borderline and
-                postac.getGlobalBounds().left + postac.getGlobalBounds().width < enemy->right_borderline and
+            if (postac.getGlobalBounds().left + postac.getGlobalBounds().width > enemy->left_borderline and
+                postac.getGlobalBounds().left  < enemy->right_borderline and
                 postac.getGlobalBounds().top > enemy->getGlobalBounds().top - enemy->getGlobalBounds().height and
                 postac.getGlobalBounds().top + postac.getGlobalBounds().height <
                 enemy->getGlobalBounds().top + 2 * enemy->getGlobalBounds().height) {
@@ -280,7 +302,7 @@ int main() {
         }
 
 
-        //collision postac
+//collision postac
         postac.animate(elapsed, otoczenie, jump_cooldown);
         for(const auto& ksztalty:otoczenie){
             if(ksztalty->platforma_ruszajaca){
@@ -290,9 +312,7 @@ int main() {
 
 
 
-
-
-        //drawing
+  //drawing
 
         for (const auto& ksztalt:otoczenie) {
             window.draw(*ksztalt);
@@ -303,9 +323,110 @@ int main() {
         for (const auto& bonus:bonusy) {
             window.draw(*bonus);
         }
+        for(const auto& zycie:zycia){
+            window.draw(*zycie);
+        }
         window.draw(postac);
         window.draw(medal);
         window.draw(poziom);
+  }
+  else if(defeat && !victory){
+ //usuwanie mapy
+            for(auto enemy = enemies.begin();
+                enemy < enemies.end(); ++enemy){
+                enemies.erase(enemy);
+            }
+            for(auto bonus = bonusy.begin();
+                bonus < bonusy.end(); ++bonus){
+                bonusy.erase(bonus);
+            }
+            for(auto blok = otoczenie.begin();
+                blok < otoczenie.end(); ++blok){
+                otoczenie.erase(blok);
+            }
+            for (auto wystrzelony_pocisk = Pocisk::wrogie_pociski.begin();
+                 wystrzelony_pocisk < Pocisk::wrogie_pociski.end(); ++wystrzelony_pocisk) {
+                Pocisk::wrogie_pociski.erase(wystrzelony_pocisk);
+            }
+            for (auto wystrzelony_pocisk = Pocisk::wystrzelone_pociski.begin();
+                 wystrzelony_pocisk < Pocisk::wystrzelone_pociski.end(); ++wystrzelony_pocisk) {
+                Pocisk::wystrzelone_pociski.erase(wystrzelony_pocisk);
+            }
+            window.clear(Color::Black);
+            Sprite porazka;
+            porazka.setPosition(0,0);
+            porazka.setTexture(przegrana_tekstura);
+            porazka.setScale(5,5);
+            window.draw(porazka);
+            if(Keyboard::isKeyPressed(Keyboard::Space)){
+                postac.shot_cooldown=1;
+                postac.set_points(0);
+                postac.setPosition(position);
+                postac.set_lives(difficulty_level::bohater_hp);
+                for(int i=0; i<postac.get_lives(); i++){
+                    shared_ptr<Sprite> serduszko;
+                    serduszko = make_shared<Sprite>(zycia_tekstura);
+                    serduszko->setPosition(window.getSize().x-30-((i+1)*serduszko->getGlobalBounds().width),window.getSize().y-30-serduszko->getGlobalBounds().height);
+                    zycia.emplace_back(serduszko);
+                }
+                tworzenie_scian(otoczenie,bonusy, enemies, sciana_tekstura, blok_tekstura,bonus_tekstura);
+                defeat=!defeat;
+
+            }
+
+        }
+   else if(!defeat && victory){
+//usuwanie mapy
+
+          for(auto enemy = enemies.begin();
+              enemy < enemies.end(); ++enemy){
+              enemies.erase(enemy);
+          }
+          for(auto bonus = bonusy.begin();
+               bonus < bonusy.end(); ++bonus){
+               bonusy.erase(bonus);
+          }
+          for(auto blok = otoczenie.begin();
+               blok < otoczenie.end(); ++blok){
+               otoczenie.erase(blok);
+          }
+          for (auto wystrzelony_pocisk = Pocisk::wrogie_pociski.begin();
+               wystrzelony_pocisk < Pocisk::wrogie_pociski.end(); ++wystrzelony_pocisk) {
+               Pocisk::wrogie_pociski.erase(wystrzelony_pocisk);
+          }
+          for (auto wystrzelony_pocisk = Pocisk::wystrzelone_pociski.begin();
+               wystrzelony_pocisk < Pocisk::wystrzelone_pociski.end(); ++wystrzelony_pocisk) {
+               Pocisk::wystrzelone_pociski.erase(wystrzelony_pocisk);
+          }
+          for (auto serduszko = zycia.begin();
+               serduszko < zycia.end(); ++serduszko) {
+               zycia.erase(serduszko);
+          }
+            window.clear(Color::Black);
+            Sprite zwyciestwo;
+            zwyciestwo.setPosition(0,0);
+            zwyciestwo.setTexture(wygrana_testura);
+            zwyciestwo.setScale(window.getSize().x/1152,window.getSize().y/648);
+            window.draw(zwyciestwo);
+            if(Keyboard::isKeyPressed(Keyboard::Space)){
+                postac.shot_cooldown=1;
+                postac.set_points(0);
+                postac.setPosition(position);
+                postac.set_lives(difficulty_level::bohater_hp);
+                for(int i=0; i<postac.get_lives(); i++){
+                    shared_ptr<Sprite> serduszko;
+                    serduszko = make_shared<Sprite>(zycia_tekstura);
+                    serduszko->setPosition(window.getSize().x-30-((i+1)*serduszko->getGlobalBounds().width),window.getSize().y-30-serduszko->getGlobalBounds().height);
+                    zycia.emplace_back(serduszko);
+                }
+                tworzenie_scian(otoczenie,bonusy, enemies, sciana_tekstura, blok_tekstura,bonus_tekstura);
+                victory=!victory;
+            }
+
+        }
+
+
+
 
 
         window.display();

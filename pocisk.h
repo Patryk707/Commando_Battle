@@ -10,7 +10,6 @@ using namespace std;
 
 class Pocisk:public::Sprite
 {
-    //float promien_pocisku=4.0f;
     bool facing;
 public:
     Pocisk(Vector2f size, bool face,bool enemy_bullet);
@@ -30,7 +29,6 @@ public:
         const static Texture pocisk_tekstura = load_textura("../textures/bulletRedSilver_outline.png");
         return const_cast<Texture&>(pocisk_tekstura);
     }
-    //bool enemy_bullet=false;
 
 
     void set_speed(float speed);

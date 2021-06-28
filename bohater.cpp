@@ -1,8 +1,10 @@
 #include "bohater.h"
 #include "pocisk.h"
 
-Bohater::Bohater(Vector2f& position) {
+Bohater::Bohater(Vector2f& position,Vector2f &scale,float left, float right, float top, float bottom) {
     setPosition(position);
+    setScale(scale);
+    setBounds(left,right,top,bottom);
 
     setTextureRect({0, 0, texture_size.x, texture_size.y});
     setOrigin(float(texture_size.x) / 2, float(texture_size.y) / 2);
@@ -70,7 +72,6 @@ void Bohater::animate(const Time& elapsed, const vector<shared_ptr<Platforma>>& 
     }
     if (Keyboard::isKeyPressed(Keyboard::Key::W) && getGlobalBounds().top > top_borderline &&
         jump_cooldown.getElapsedTime().asSeconds() >= 1) {
-        //setSpeed(0, -400);
         speed_y = -700;
         jump_cooldown.restart();
     }
@@ -195,3 +196,14 @@ bool Bohater::win(Bonus& medal) {
         return false;
     }
 }
+void Bohater::set_points(int p){
+    points=p;
+}
+int Bohater::get_lives(){
+    return lives;
+}
+void Bohater::set_lives(int l){
+    lives=l;
+}
+
+
